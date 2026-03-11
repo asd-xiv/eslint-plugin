@@ -1,0 +1,74 @@
+{
+  "name": "@asd14/eslint-plugin",
+  "version": "0.1.0",
+  "description": "ESLint rules for opinionated DX not covered by existing plugins",
+  "license": "MIT",
+  "author": {
+    "name": "Andrei Dumitrescu",
+    "url": "https://github.com/andreidmt"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "/dist"
+  ],
+  "nx": {
+    "projectType": "library",
+    "tags": [
+      "type:library",
+      "target:node"
+    ]
+  },
+  "scripts": {
+    "----BUNDLE": "",
+    "build:code": "swc src -d dist --ignore '**/*.test.ts' --strip-leading-paths",
+    "build:types": "tsc --declaration --emitDeclarationOnly --project ./.tsconfig/code.json",
+    "prebuild": "rm -rf dist/* node_modules/.tmp/*.tsbuildinfo",
+    "build": "npm run build:code && npm run build:types",
+    "----LINT": "",
+    "lint": "eslint --quiet .",
+    "typecheck:code": "tsc --noEmit --project ./.tsconfig/code.json",
+    "typecheck:config": "tsc --noEmit --project ./.tsconfig/config.json",
+    "typecheck:tests": "tsc --noEmit --project ./.tsconfig/tests.json",
+    "typecheck": "npm run typecheck:code && npm run typecheck:config && npm run typecheck:tests",
+    "----TEST": "",
+    "test": "node --import tsx --test 'src/**/*.test.ts'",
+    "coverage": "c8 --100 --exclude='src/**/*.test.ts' node --import tsx --test 'src/**/*.test.ts'",
+    "----PUBLISH": "",
+    "release": "semantic-release"
+  },
+  "dependencies": {
+    "acorn": "^8.16.0"
+  },
+  "devDependencies": {
+    "@asd14/eslint-config": "^15.2.0",
+    "@asd14/prettier-config": "^1.2.0",
+    "@asd14/ts-config": "^1.3.0",
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
+    "@semantic-release/git": "^10.0.1",
+    "@swc/cli": "^0.5.0",
+    "@swc/core": "^1.15.18",
+    "c8": "^11.0.0",
+    "conventional-changelog-conventionalcommits": "^9.3.0",
+    "eslint": "^9.39.2",
+    "prettier": "^3.8.1",
+    "semantic-release": "^24.2.9",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "eslint": "^9 || ^10"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
