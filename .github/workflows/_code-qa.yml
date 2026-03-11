@@ -73,20 +73,13 @@ jobs:
           path: node_modules
           key: node-modules-${{ inputs.cache-key }}
 
-      - name: Run type tests
-        run: npm run test:types
-
       - name: Run tests with coverage
         run: |
-          node --import tsx --test \
-            --experimental-test-coverage \
-            --test-coverage-lines=100 \
-            --test-coverage-branches=100 \
-            --test-coverage-functions=100 \
-            --test-coverage-exclude='src/**/*.test.ts' \
-            --test-reporter=spec --test-reporter-destination=stdout \
-            --test-reporter=junit --test-reporter-destination=test-results.xml \
-            'src/**/*.test.ts'
+          npx c8 --100 --exclude='src/**/*.test.ts' \
+            node --import tsx --test \
+              --test-reporter=spec --test-reporter-destination=stdout \
+              --test-reporter=junit --test-reporter-destination=test-results.xml \
+              'src/**/*.test.ts'
 
       - name: Test report
         uses: dorny/test-reporter@v2

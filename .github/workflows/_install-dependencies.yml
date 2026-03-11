@@ -9,7 +9,7 @@ on:
 
 jobs:
   setup:
-    name: Setup
+    name: NPM node_modules
     runs-on: ubuntu-latest
     outputs:
       cache-key: ${{ steps.cache-key.outputs.hash }}
