@@ -1,6 +1,6 @@
 {
   "name": "@asd14/eslint-plugin",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "ESLint rules for opinionated DX not covered by existing plugins",
   "license": "MIT",
   "sideEffects": false,
