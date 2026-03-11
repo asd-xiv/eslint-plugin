@@ -17,7 +17,6 @@ jobs:
 
   install-dependencies:
     name: Install Dependencies
-    needs: [detect-secrets]
     uses: ./.github/workflows/_install-dependencies.yml
 
   lint-title:
@@ -47,7 +46,7 @@ jobs:
 
   code-qa:
     name: Code QA
-    needs: [install-dependencies]
+    needs: [detect-secrets, install-dependencies]
     uses: ./.github/workflows/_code-qa.yml
     with:
       cache-key: ${{ needs.install-dependencies.outputs.cache-key }}
