@@ -9,7 +9,7 @@
 
 - [Install](#install)
 - [Rules](#rules)
-  - [`@asd14/error-message-format`](#asd14error-message-format)
+  - [`@asd14/throw-argument-format`](#asd14throw-argument-format)
 - [Develop](#develop)
 
 <!-- vim-markdown-toc -->
@@ -25,7 +25,7 @@ npm install @asd14/eslint-plugin --save-dev
 
 ## Rules
 
-### `@asd14/error-message-format`
+### `@asd14/throw-argument-format`
 
 Enforce consistent error message format in `throw` statements.
 
@@ -41,7 +41,7 @@ export default [
   {
     plugins: { "@asd14": asd14Plugin },
     rules: {
-      "@asd14/error-message-format": [
+      "@asd14/throw-argument-format": [
         "error",
         {
           TypeError: [

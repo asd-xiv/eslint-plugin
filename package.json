@@ -48,8 +48,8 @@
     "typecheck:tests": "tsc --noEmit --project ./.tsconfig/tests.json",
     "typecheck": "npm run typecheck:code && npm run typecheck:config && npm run typecheck:tests",
     "----TEST": "",
-    "test": "node --import tsx --test 'src/**/*.test.ts'",
-    "coverage": "c8 --100 --exclude='src/**/*.test.ts' node --import tsx --test 'src/**/*.test.ts'",
+    "test": "TSX_TSCONFIG_PATH=.tsconfig/tests.json node --import tsx --test 'src/**/*.test.ts'",
+    "coverage": "TSX_TSCONFIG_PATH=.tsconfig/tests.json c8 --100 --exclude='src/**/*.test.ts' node --import tsx --test 'src/**/*.test.ts'",
     "----PUBLISH": "",
     "release": "semantic-release"
   },

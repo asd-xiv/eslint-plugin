@@ -1,7 +1,6 @@
+import { stringifyExpression } from "@u/stringify-expression.js"
 import type { Expression } from "acorn"
 import type { Rule } from "eslint"
-
-import { flattenExpression } from "./utils/flatten-expression.js"
 
 type Check = {
   pattern: string
@@ -10,7 +9,7 @@ type Check = {
 
 type Options = Record<string, Check[]>
 
-const errorMessageFormat: Rule.RuleModule = {
+const throwArgumentFormat: Rule.RuleModule = {
   meta: {
     type: "suggestion",
     docs: {
@@ -73,7 +72,7 @@ const errorMessageFormat: Rule.RuleModule = {
 
         // Turn AST -> string representation which we can match against the
         // user's RegExps
-        const fullMessage = flattenExpression(firstArgument as Expression)
+        const fullMessage = stringifyExpression(firstArgument as Expression)
 
         // Can't validate entirely opaque variable, function call, etc.
         if (fullMessage === "EXPR") {
@@ -89,7 +88,6 @@ const errorMessageFormat: Rule.RuleModule = {
         // Report the first check's message if none match.
         for (const check of checks) {
           const re = new RegExp(check.pattern)
-
           if (re.test(fullMessage)) {
             return
           }
@@ -107,4 +105,4 @@ const errorMessageFormat: Rule.RuleModule = {
   },
 }
 
-export { errorMessageFormat }
+export { throwArgumentFormat }

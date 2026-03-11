@@ -12,11 +12,11 @@ This file contains details about why certain package decisions were taken.
 
 <!-- vim-markdown-toc GFM -->
 
-- [001: `c8` over Node's built-in test runner](#001-c8-over-nodes-built-in-test-runner)
+- [001: Use `c8` over Node's built-in test runner](#001-use-c8-over-nodes-built-in-test-runner)
 
 <!-- vim-markdown-toc -->
 
-## 001: `c8` over Node's built-in test runner
+## 001: Use `c8` over Node's built-in test runner
 
 - **Date**: 11 March, 2026
 - **Author**: Andrei Dumitrescu

@@ -6,7 +6,7 @@ import type { Expression } from "acorn"
  * non-literal parts (interpolations, function calls, identifiers) with
  * the placeholder "EXPR".
  */
-const flattenExpression = (node: Expression): string => {
+const stringifyExpression = (node: Expression): string => {
   // String literals: "hello" → "hello"
   if (node.type === "Literal" && typeof node.value === "string") {
     return node.value
@@ -32,8 +32,8 @@ const flattenExpression = (node: Expression): string => {
     // Acorn types `left` as `Expression | PrivateIdentifier` because
     // BinaryExpression covers `a in #field` (the `in` operator can have
     // a PrivateIdentifier on the right). For `+` this can never happen.
-    const left = flattenExpression(node.left as Expression)
-    const right = flattenExpression(node.right)
+    const left = stringifyExpression(node.left as Expression)
+    const right = stringifyExpression(node.right)
 
     return left + right
   }
@@ -43,4 +43,4 @@ const flattenExpression = (node: Expression): string => {
   return "EXPR"
 }
 
-export { flattenExpression }
+export { stringifyExpression }

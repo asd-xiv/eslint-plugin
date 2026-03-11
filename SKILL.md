@@ -1,8 +1,8 @@
 ---
 name: using-asd14-eslint-plugin
 description:
-  Enforces consistent error message formats in throw statements via ESLint. Use
-  when configuring @asd14/eslint-plugin or adding error-message linting rules.
+  Enforces consistent argument formats in throw statements via ESLint. Use when
+  configuring @asd14/eslint-plugin or adding throw-argument linting rules.
 ---
 
 # @asd14/eslint-plugin
@@ -10,7 +10,7 @@ description:
 ESLint rules for opinionated DX patterns not covered by existing plugins.
 Requires `eslint ^9 || ^10` as peer dependency.
 
-## error-message-format
+## throw-argument-format
 
 Enforce consistent error message format in `throw` statements.
 
@@ -28,7 +28,7 @@ export default [
   {
     plugins: { "@asd14": asd14Plugin },
     rules: {
-      "@asd14/error-message-format": [
+      "@asd14/throw-argument-format": [
         "error",
         {
           TypeError: [

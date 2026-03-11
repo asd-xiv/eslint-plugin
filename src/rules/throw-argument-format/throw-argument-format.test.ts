@@ -1,6 +1,6 @@
 import { RuleTester } from "eslint"
 
-import { errorMessageFormat } from "./error-message-format.js"
+import { throwArgumentFormat } from "./throw-argument-format.js"
 
 const ruleTester = new RuleTester({
   languageOptions: {
@@ -28,7 +28,7 @@ const OPTIONS = [
   },
 ]
 
-ruleTester.run("error-message-format", errorMessageFormat, {
+ruleTester.run("throw-argument-format", throwArgumentFormat, {
   valid: [
     // Single type — interpolated actual via template literal
     {
@@ -133,7 +133,7 @@ const ERROR_OPTIONS = [
   },
 ]
 
-ruleTester.run("error-message-format (Error class)", errorMessageFormat, {
+ruleTester.run("throw-argument-format (Error class)", throwArgumentFormat, {
   valid: [
     {
       code: 'throw new Error("[parser] unexpected token")',
@@ -154,4 +154,4 @@ ruleTester.run("error-message-format (Error class)", errorMessageFormat, {
   ],
 })
 
-console.log("All error-message-format tests passed")
+console.log("All throw-argument-format tests passed")

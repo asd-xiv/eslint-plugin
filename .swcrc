@@ -16,6 +16,9 @@
     "parser": {
       "syntax": "typescript",
       "dynamicImport": true
+    },
+    "paths": {
+      "@u/*": ["./src/utils/*"]
     }
   }
 }

@@ -1,13 +1,13 @@
 import packageJSON from "../package.json" with { type: "json" }
 
-import { errorMessageFormat } from "./rules/error-message-format/error-message-format.js"
+import { throwArgumentFormat } from "./rules/throw-argument-format/throw-argument-format.js"
 
 const plugin = {
   meta: { name: packageJSON.name, version: packageJSON.version },
   rules: {
-    "error-message-format": errorMessageFormat,
+    "throw-argument-format": throwArgumentFormat,
   },
 }
 
 export default plugin
-export { errorMessageFormat }
+export { throwArgumentFormat }

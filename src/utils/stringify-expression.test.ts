@@ -2,26 +2,26 @@ import { strictEqual } from "node:assert"
 import { describe, test } from "node:test"
 import { parseExpressionAt } from "acorn"
 
-import { flattenExpression } from "./flatten-expression.js"
+import { stringifyExpression } from "./stringify-expression.js"
 
 const parseExpression = (code: string) =>
   parseExpressionAt(code, 0, { ecmaVersion: 2022, sourceType: "module" })
 
-describe("flattenExpression - valid", () => {
+describe("stringifyExpression - valid", () => {
   // Plain string, no interpolation
   test("string literal", () => {
-    strictEqual(flattenExpression(parseExpression("'hello'")), "hello")
+    strictEqual(stringifyExpression(parseExpression("'hello'")), "hello")
   })
 
   // Template without interpolations
   test("template literal, no interpolation", () => {
-    strictEqual(flattenExpression(parseExpression("`hello`")), "hello")
+    strictEqual(stringifyExpression(parseExpression("`hello`")), "hello")
   })
 
   // Single interpolation: `got '${x}'`
   test("template literal, one interpolation", () => {
     strictEqual(
-      flattenExpression(parseExpression("`got '${x}'`")),
+      stringifyExpression(parseExpression("`got '${x}'`")),
       "got 'EXPR'"
     )
   })
@@ -29,7 +29,7 @@ describe("flattenExpression - valid", () => {
   // Multiple interpolations: `${a} and ${b} end`
   test("template literal, multiple interpolations", () => {
     strictEqual(
-      flattenExpression(parseExpression("`${a} and ${b} end`")),
+      stringifyExpression(parseExpression("`${a} and ${b} end`")),
       "EXPR and EXPR end"
     )
   })
@@ -37,7 +37,7 @@ describe("flattenExpression - valid", () => {
   // "str" + fn() → two-segment concat
   test("string + call expression", () => {
     strictEqual(
-      flattenExpression(parseExpression("'prefix ' + fn()")),
+      stringifyExpression(parseExpression("'prefix ' + fn()")),
       "prefix EXPR"
     )
   })
@@ -45,29 +45,29 @@ describe("flattenExpression - valid", () => {
   // ("str" + fn()) + "'" → three-segment, mirrors real throw patterns
   test("nested binary + chain", () => {
     strictEqual(
-      flattenExpression(parseExpression("'expected ' + fn() + \"'\"")),
+      stringifyExpression(parseExpression("'expected ' + fn() + \"'\"")),
       "expected EXPR'"
     )
   })
 })
 
-describe("flattenExpression - invalid", () => {
+describe("stringifyExpression - invalid", () => {
   // Non-string literals
   test("numeric literal", () => {
-    strictEqual(flattenExpression(parseExpression("42")), "EXPR")
+    strictEqual(stringifyExpression(parseExpression("42")), "EXPR")
   })
 
   // Non-+ binary operators
   test("binary minus", () => {
-    strictEqual(flattenExpression(parseExpression("a - b")), "EXPR")
+    strictEqual(stringifyExpression(parseExpression("a - b")), "EXPR")
   })
 
   // Call expressions, identifiers — anything unknown
   test("call expression", () => {
-    strictEqual(flattenExpression(parseExpression("fn()")), "EXPR")
+    strictEqual(stringifyExpression(parseExpression("fn()")), "EXPR")
   })
 
   test("identifier", () => {
-    strictEqual(flattenExpression(parseExpression("x")), "EXPR")
+    strictEqual(stringifyExpression(parseExpression("x")), "EXPR")
   })
 })
