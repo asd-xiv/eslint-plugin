@@ -3,20 +3,18 @@
   "version": "1.0.0",
   "description": "ESLint rules for opinionated DX not covered by existing plugins",
   "license": "MIT",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asd-xiv/eslint-plugin.git"
+  },
   "author": {
     "name": "Andrei Dumitrescu",
     "url": "https://github.com/andreidmt"
   },
-  "type": "module",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./package.json": "./package.json"
-  },
-  "sideEffects": false,
   "files": [
     "/dist",
     "SKILL.md"
@@ -27,6 +25,15 @@
       "type:library",
       "target:node"
     ]
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "----BUNDLE": "",
