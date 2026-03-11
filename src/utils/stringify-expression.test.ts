@@ -8,42 +8,36 @@ const parseExpression = (code: string) =>
   parseExpressionAt(code, 0, { ecmaVersion: 2022, sourceType: "module" })
 
 describe("stringifyExpression - valid", () => {
-  // Plain string, no interpolation
-  test("string literal", () => {
+  test("given [plain string] should [return its content]", () => {
     strictEqual(stringifyExpression(parseExpression("'hello'")), "hello")
   })
 
-  // Template without interpolations
-  test("template literal, no interpolation", () => {
+  test("given [template literal without interpolation] should [return its content]", () => {
     strictEqual(stringifyExpression(parseExpression("`hello`")), "hello")
   })
 
-  // Single interpolation: `got '${x}'`
-  test("template literal, one interpolation", () => {
+  test("given [template literal with one interpolation] should [replace with EXPR]", () => {
     strictEqual(
       stringifyExpression(parseExpression("`got '${x}'`")),
       "got 'EXPR'"
     )
   })
 
-  // Multiple interpolations: `${a} and ${b} end`
-  test("template literal, multiple interpolations", () => {
+  test("given [template literal with multiple interpolations] should [replace all with EXPR]", () => {
     strictEqual(
       stringifyExpression(parseExpression("`${a} and ${b} end`")),
       "EXPR and EXPR end"
     )
   })
 
-  // "str" + fn() → two-segment concat
-  test("string + call expression", () => {
+  test("given [string + call expression] should [concat with EXPR]", () => {
     strictEqual(
       stringifyExpression(parseExpression("'prefix ' + fn()")),
       "prefix EXPR"
     )
   })
 
-  // ("str" + fn()) + "'" → three-segment, mirrors real throw patterns
-  test("nested binary + chain", () => {
+  test("given [nested binary + chain] should [concat with EXPR]", () => {
     strictEqual(
       stringifyExpression(parseExpression("'expected ' + fn() + \"'\"")),
       "expected EXPR'"
@@ -52,22 +46,19 @@ describe("stringifyExpression - valid", () => {
 })
 
 describe("stringifyExpression - invalid", () => {
-  // Non-string literals
-  test("numeric literal", () => {
+  test("given [numeric literal] should [return EXPR]", () => {
     strictEqual(stringifyExpression(parseExpression("42")), "EXPR")
   })
 
-  // Non-+ binary operators
-  test("binary minus", () => {
+  test("given [binary minus] should [return EXPR]", () => {
     strictEqual(stringifyExpression(parseExpression("a - b")), "EXPR")
   })
 
-  // Call expressions, identifiers — anything unknown
-  test("call expression", () => {
+  test("given [call expression] should [return EXPR]", () => {
     strictEqual(stringifyExpression(parseExpression("fn()")), "EXPR")
   })
 
-  test("identifier", () => {
+  test("given [identifier] should [return EXPR]", () => {
     strictEqual(stringifyExpression(parseExpression("x")), "EXPR")
   })
 })

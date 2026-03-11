@@ -10,6 +10,7 @@
 - [Install](#install)
 - [Rules](#rules)
   - [`@asd14/throw-argument-format`](#asd14throw-argument-format)
+  - [`@asd14/call-argument-format`](#asd14call-argument-format)
 - [Develop](#develop)
 
 <!-- vim-markdown-toc -->
@@ -98,6 +99,78 @@ throw new TypeError(`@asd14/m/sort: expected Array, got ${type(input)}`)
 
 // Can't statically evaluate
 throw new TypeError(message)
+```
+
+### `@asd14/call-argument-format`
+
+Enforce consistent argument format in function or method calls.
+
+- Key: `|`-separated function/method names
+- `argumentIndex`: defaults to `0`, negative counts from end (`-1` = last arg)
+- `pattern`: regexp tested against the stringified argument
+- `required: true`: asserts the argument exists (no regexp needed)
+- Works with direct calls (`test(...)`) and method calls (`t.equal(...)`,
+  `expect().toRaiseError(...)`)
+
+```js
+// eslint.config.js
+import asd14Plugin from "@asd14/eslint-plugin"
+
+export default [
+  {
+    plugins: { "@asd14": asd14Plugin },
+    rules: {
+      "@asd14/call-argument-format": [
+        "error",
+        {
+          // Tape assertion messages must follow given/should pattern
+          "equal|deepEqual|ok|throws": [
+            {
+              argumentIndex: -1,
+              pattern: "^given \\[.+\\] should \\[.+\\]$",
+              message:
+                "Assertion message must match: given [<context>] should [<expectation>]"
+            }
+          ],
+          // tstyche toRaiseError must include an error pattern
+          "toRaiseError": [
+            {
+              required: true,
+              message: "toRaiseError() must include an error pattern argument"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
+```
+
+**Correct** examples:
+
+```js
+// Tape - last argument matches pattern
+t.equal(result, 42, "given [valid input] should [return 42]")
+t.deepEqual(
+  output,
+  expected,
+  "given [empty array] should [return empty object]"
+)
+
+// tstyche - toRaiseError has an argument
+expect(mutate({ name: 42 }, input)).type.toRaiseError(
+  /'number' is not assignable/
+)
+```
+
+**Incorrect** examples:
+
+```js
+// Missing given/should pattern
+t.equal(result, 42, "returns 42")
+
+// Empty toRaiseError
+expect(mutate({ name: 42 }, input)).type.toRaiseError()
 ```
 
 ## Develop

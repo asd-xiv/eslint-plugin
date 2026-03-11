@@ -1,8 +1,9 @@
 ---
 name: using-asd14-eslint-plugin
 description:
-  Enforces consistent argument formats in throw statements via ESLint. Use when
-  configuring @asd14/eslint-plugin or adding throw-argument linting rules.
+  Enforces consistent formats in throw arguments and function call arguments via
+  ESLint. Use when configuring @asd14/eslint-plugin or adding format linting
+  rules.
 ---
 
 # @asd14/eslint-plugin
@@ -48,34 +49,81 @@ export default [
 ### Correct
 
 ```js
-// String literal
 throw new TypeError("myLib/sort: expected 'input' to be 'Array', got 'Number'")
-
-// Template literal with interpolation
 throw new TypeError(
   `myLib/sort: expected 'input' to be 'Array', got '${type(input)}'`
 )
-
-// String concatenation
 throw new TypeError(
   "myLib/sort: expected 'input' to be 'Array', got '" + type(input) + "'"
 )
-
-// Unconfigured error classes are ignored
 throw new Error("anything goes")
 ```
 
 ### Incorrect
 
 ```js
-// Missing prefix
 throw new TypeError("expected 'input' to be 'Array', got 'Number'")
-
-// Unquoted types
 throw new TypeError(`myLib/sort: expected Array, got ${type(input)}`)
-
-// Non-evaluable — variable reference
 throw new TypeError(message)
+```
+
+## call-argument-format
+
+Enforce consistent argument format in function or method calls.
+
+- Key: `|`-separated function/method names
+- `argumentIndex`: defaults to `0`, negative counts from end (`-1` = last arg)
+- `pattern`: regexp tested against the stringified argument
+- `required: true`: asserts the argument exists (no regexp needed)
+- Works with direct calls (`test(...)`) and method calls (`t.equal(...)`,
+  `expect().toRaiseError(...)`)
+
+```js
+// eslint.config.js
+import asd14Plugin from "@asd14/eslint-plugin"
+
+export default [
+  {
+    plugins: { "@asd14": asd14Plugin },
+    rules: {
+      "@asd14/call-argument-format": [
+        "error",
+        {
+          "equal|deepEqual|ok|throws": [
+            {
+              argumentIndex: -1,
+              pattern: "^given \\[.+\\] should \\[.+\\]$",
+              message:
+                "Assertion message must match: given [<context>] should [<expectation>]"
+            }
+          ],
+          "toRaiseError": [
+            {
+              required: true,
+              message: "toRaiseError() must include an error pattern argument"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
+```
+
+### Correct
+
+```js
+t.equal(result, 42, "given [valid input] should [return 42]")
+expect(mutate({ name: 42 }, input)).type.toRaiseError(
+  /'number' is not assignable/
+)
+```
+
+### Incorrect
+
+```js
+t.equal(result, 42, "returns 42")
+expect(mutate({ name: 42 }, input)).type.toRaiseError()
 ```
 
 ## Contributing rules

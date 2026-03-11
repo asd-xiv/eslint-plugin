@@ -37,7 +37,7 @@
   },
   "scripts": {
     "----BUNDLE": "",
-    "build:code": "swc src -d dist --ignore '**/*.test.ts' --strip-leading-paths",
+    "build:code": "swc src -d dist --ignore '**/*.test.ts' --ignore '**/*.estest.ts' --strip-leading-paths",
     "build:types": "tsc --declaration --emitDeclarationOnly --project ./.tsconfig/code.json",
     "prebuild": "rm -rf dist/* node_modules/.tmp/*.tsbuildinfo",
     "build": "npm run build:code && npm run build:types",
@@ -48,8 +48,8 @@
     "typecheck:tests": "tsc --noEmit --project ./.tsconfig/tests.json",
     "typecheck": "npm run typecheck:code && npm run typecheck:config && npm run typecheck:tests",
     "----TEST": "",
-    "test": "TSX_TSCONFIG_PATH=.tsconfig/tests.json node --import tsx --test 'src/**/*.test.ts'",
-    "coverage": "TSX_TSCONFIG_PATH=.tsconfig/tests.json c8 --100 --exclude='src/**/*.test.ts' node --import tsx --test 'src/**/*.test.ts'",
+    "test": "TSX_TSCONFIG_PATH=.tsconfig/tests.json node --import tsx --test 'src/**/*.test.ts' 'src/**/*.estest.ts'",
+    "coverage": "TSX_TSCONFIG_PATH=.tsconfig/tests.json c8 --100 --exclude='src/**/*.test.ts' --exclude='src/**/*.estest.ts' node --import tsx --test 'src/**/*.test.ts' 'src/**/*.estest.ts'",
     "----PUBLISH": "",
     "release": "semantic-release"
   },
