@@ -31,6 +31,9 @@ jobs:
           path: node_modules
           key: node-modules-${{ inputs.cache-key }}
 
+      - name: Build project (eslint.config.js imports itself)
+        run: npm run build
+
       - name: Run linting
         run: npm run lint
 
@@ -51,6 +54,9 @@ jobs:
         with:
           path: node_modules
           key: node-modules-${{ inputs.cache-key }}
+
+      - name: Build project (eslint.config.js is importing itself and is typechecked)
+        run: npm run build
 
       - name: Run type checking
         run: npm run typecheck
@@ -75,11 +81,12 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          npx c8 --100 --exclude='src/**/*.test.ts' \
+          TSX_TSCONFIG_PATH=.tsconfig/tests.json \
+          npx c8 --100 --exclude='src/**/*.test.ts' --exclude='src/**/*.estest.ts' \
             node --import tsx --test \
               --test-reporter=spec --test-reporter-destination=stdout \
               --test-reporter=junit --test-reporter-destination=test-results.xml \
-              'src/**/*.test.ts'
+              'src/**/*.test.ts' 'src/**/*.estest.ts'
 
       - name: Test report
         uses: dorny/test-reporter@v2
