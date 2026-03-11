@@ -2,7 +2,7 @@ name: Check
 on:
   push:
     branches-ignore:
-      - master
+      - main
   pull_request_target:
     types: [opened, edited, synchronize]
 
@@ -13,12 +13,12 @@ permissions:
 jobs:
   detect-secrets:
     name: Detect Secrets
-    uses: ./.github/workflows/reusable/detect-secrets.yml
+    uses: ./.github/workflows/_detect-secrets.yml
 
   install-dependencies:
     name: Install Dependencies
     needs: [detect-secrets]
-    uses: ./.github/workflows/reusable/install-dependencies.yml
+    uses: ./.github/workflows/_install-dependencies.yml
 
   lint-title:
     name: Conventional Commit
@@ -48,7 +48,7 @@ jobs:
   code-qa:
     name: Code QA
     needs: [install-dependencies]
-    uses: ./.github/workflows/reusable/code-qa.yml
+    uses: ./.github/workflows/_code-qa.yml
     with:
       cache-key: ${{ needs.install-dependencies.outputs.cache-key }}
       node-version: ${{ needs.install-dependencies.outputs.node-version }}
