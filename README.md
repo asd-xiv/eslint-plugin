@@ -1,5 +1,6 @@
 [![npm version](https://badge.fury.io/js/%40asd14%2Feslint-plugin.svg)](https://badge.fury.io/js/%40asd14%2Feslint-plugin)
 ![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+[![CI](https://github.com/asd-xiv/eslint-plugin/actions/workflows/main.yml/badge.svg)](https://github.com/asd-xiv/eslint-plugin/actions/workflows/main.yml)
 
 # @asd14/eslint-plugin
 
