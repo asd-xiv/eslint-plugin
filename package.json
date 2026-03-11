@@ -18,7 +18,8 @@
   },
   "sideEffects": false,
   "files": [
-    "/dist"
+    "/dist",
+    "SKILL.md"
   ],
   "nx": {
     "projectType": "library",
