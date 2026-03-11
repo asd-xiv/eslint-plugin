@@ -67,7 +67,10 @@ export default [
 ]
 ```
 
-**Correct** message examples:
+<details>
+<summary>Examples</summary>
+
+**Correct**
 
 ```js
 // Template literal with interpolation
@@ -89,7 +92,7 @@ throw new TypeError(
 throw new Error("something went wrong")
 ```
 
-**Incorrect** message examples:
+**Incorrect**
 
 ```js
 // Missing @asd14/m/ prefix
@@ -101,6 +104,8 @@ throw new TypeError(`@asd14/m/sort: expected Array, got ${type(input)}`)
 // Can't statically evaluate
 throw new TypeError(message)
 ```
+
+</details>
 
 ### `@asd14/call-argument-format`
 
@@ -147,7 +152,10 @@ export default [
 ]
 ```
 
-**Correct** examples:
+<details>
+<summary>Examples</summary>
+
+**Correct**
 
 ```js
 // Tape - last argument matches pattern
@@ -164,7 +172,7 @@ expect(mutate({ name: 42 }, input)).type.toRaiseError(
 )
 ```
 
-**Incorrect** examples:
+**Incorrect**
 
 ```js
 // Missing given/should pattern
@@ -173,6 +181,8 @@ t.equal(result, 42, "returns 42")
 // Empty toRaiseError
 expect(mutate({ name: 42 }, input)).type.toRaiseError()
 ```
+
+</details>
 
 ## Develop
 
