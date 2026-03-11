@@ -20,7 +20,7 @@
 npm install @asd14/eslint-plugin --save-dev
 ```
 
-> NOTE: requires peerDependency `eslint^9` or `eslint^10`
+> [!NOTE] Works with either `eslint ^9` or `eslint ^10`.
 
 ## Rules
 
@@ -29,7 +29,7 @@ npm install @asd14/eslint-plugin --save-dev
 Enforce consistent error message format in `throw` statements.
 
 - Per error class: `Error`, `TypeError` or custom `DBError`
-- Each is an array of `RegExp` patterns
+- Each class is an array of `RegExp` patterns
 - `OR` matching, first match wins
 
 ```js
@@ -64,7 +64,7 @@ export default [
 ]
 ```
 
-Examples of **correct** messages:
+**Correct** message examples:
 
 ```js
 // Template literal with interpolation
@@ -86,7 +86,7 @@ throw new TypeError(
 throw new Error("something went wrong")
 ```
 
-Examples of **incorrect** messages:
+**Incorrect** message examples:
 
 ```js
 // Missing @asd14/m/ prefix
