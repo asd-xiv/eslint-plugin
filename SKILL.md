@@ -12,12 +12,11 @@ Requires `eslint ^9 || ^10` as peer dependency.
 
 ## error-message-format
 
-Enforces consistent format in `throw new Error(...)` statements.
+Enforce consistent error message format in `throw` statements.
 
-- Configured per error class (`TypeError`, `Error`, custom classes)
-- Each class: array of `{ pattern, message }` checks
-- `pattern`: plain regex string, no `/` delimiters, passed to `new RegExp()`
-- OR matching: first match wins, reports if none match
+- Per error class: `Error`, `TypeError` or custom `DBError`
+- Each class is an array of `RegExp` patterns
+- `OR` matching, first match wins
 - Supports string literals, template literals, and string concatenation
 - Variables or function calls as the sole argument are flagged as non-evaluable
 
