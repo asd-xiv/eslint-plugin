@@ -20,7 +20,8 @@
 npm install @asd14/eslint-plugin --save-dev
 ```
 
-> [!NOTE] Works with either `eslint ^9` or `eslint ^10`.
+> [!NOTE]  
+> Works with either `eslint ^9` or `eslint ^10`.
 
 ## Rules
 
