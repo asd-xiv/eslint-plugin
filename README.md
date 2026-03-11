@@ -64,7 +64,7 @@ export default [
 ]
 ```
 
-Examples of **correct** code:
+Examples of **correct** messages:
 
 ```js
 // Template literal with interpolation
@@ -86,7 +86,7 @@ throw new TypeError(
 throw new Error("something went wrong")
 ```
 
-Examples of **incorrect** code:
+Examples of **incorrect** messages:
 
 ```js
 // Missing @asd14/m/ prefix
