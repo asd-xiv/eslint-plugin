@@ -43,4 +43,24 @@ const stringifyExpression = (node: Expression): string => {
   return "EXPR"
 }
 
-export { stringifyExpression }
+type ArgumentEvaluation = "match" | "mismatch" | "cannot_evaluate"
+
+/**
+ * Evaluate an AST expression node against a pattern string.
+ * Returns "cannot_evaluate" if the expression is not statically resolvable.
+ *
+ * @example
+ * evaluateArgument(literalNode, "^hello")  // => "match" | "mismatch"
+ * evaluateArgument(identifierNode, ".*")   // => "cannot_evaluate"
+ */
+const evaluateArgument = (
+  argument: Expression,
+  pattern: string
+): ArgumentEvaluation => {
+  const value = stringifyExpression(argument)
+  if (value === "EXPR") return "cannot_evaluate"
+  return new RegExp(pattern).test(value) ? "match" : "mismatch"
+}
+
+export { stringifyExpression, evaluateArgument }
+export type { ArgumentEvaluation }

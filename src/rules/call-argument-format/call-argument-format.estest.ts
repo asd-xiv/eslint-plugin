@@ -1,214 +1,203 @@
 import { RuleTester } from "eslint"
 
-import { callArgumentFormat } from "./call-argument-format.js"
+import { ensureCallArgumentFormat } from "./call-argument-format.js"
 
 const ruleTester = new RuleTester({
-  languageOptions: {
-    ecmaVersion: 2022,
-    sourceType: "module",
-  },
+  languageOptions: { ecmaVersion: 2022, sourceType: "module" },
 })
 
-// --- test/describe title format ---
+{
+  const OPTIONS = [
+    {
+      "test|describe": {
+        checks: [
+          {
+            pattern: "^given .+ should .+",
+            message:
+              "Test title must match: given <context> should <expectation>",
+          },
+        ],
+      },
+    },
+  ]
 
-const TEST_OPTIONS = [
-  {
-    "test|describe": [
+  ruleTester.run("call-argument-format", ensureCallArgumentFormat, {
+    valid: [
+      // Success - Happy path
       {
-        pattern: "^given .+ should .+",
-        message: "Test title must match: given <context> should <expectation>",
+        code: 'test("given somethig should another", () => {})',
+        options: OPTIONS,
+      },
+      // Success - Template literal interpolated as "EXPR"
+      { code: "test(`given ${x} should another`, () => {})", options: OPTIONS },
+      // Ignore - Not configured function name
+      { code: 'it("whatever title", () => {})', options: OPTIONS },
+      // Ignore - No options passed to rule
+      { code: 'test("whatever")' },
+      // Ignore - Computed property
+      { code: 'obj["test"]("whatever")', options: OPTIONS },
+    ],
+    invalid: [
+      // Error - No check match
+      {
+        code: 'test("returns true for numbers", () => {})',
+        options: OPTIONS,
+        errors: [{ messageId: "formatViolation" }],
+      },
+      // Error - Non-literal, can't evaluate
+      {
+        code: "test(title, () => {})",
+        options: OPTIONS,
+        errors: [{ messageId: "cannotEvaluate" }],
+      },
+      // Error - Spread argument, can't evaluate
+      {
+        code: "test(...args)",
+        options: OPTIONS,
+        errors: [{ messageId: "cannotEvaluate" }],
       },
     ],
-  },
-]
+  })
+}
 
-ruleTester.run("call-argument-format (test titles)", callArgumentFormat, {
-  valid: [
+{
+  const OPTIONS = [
     {
-      code: 'test("given a number should return true", () => {})',
-      options: TEST_OPTIONS,
+      toRaiseError: {
+        checks: [{ message: "toRaiseError must include an error pattern" }],
+      },
     },
-    {
-      code: 'describe("given empty input should throw", () => {})',
-      options: TEST_OPTIONS,
-    },
-    // Template literal with interpolation
-    {
-      code: "test(`given ${x} should return EXPR`, () => {})",
-      options: TEST_OPTIONS,
-    },
-    // Unconfigured function — ignored
-    {
-      code: 'it("whatever title", () => {})',
-      options: TEST_OPTIONS,
-    },
-    // No options — rule is a no-op
-    {
-      code: 'test("whatever")',
-    },
-  ],
-  invalid: [
-    // Missing "given ... should ..."
-    {
-      code: 'test("returns true for numbers", () => {})',
-      options: TEST_OPTIONS,
-      errors: [{ messageId: "formatViolation" }],
-    },
-    {
-      code: 'describe("number validation", () => {})',
-      options: TEST_OPTIONS,
-      errors: [{ messageId: "formatViolation" }],
-    },
-  ],
-})
+  ]
 
-// --- required argument (toRaiseError) ---
+  ruleTester.run(
+    "call-argument-format (existence check)",
+    ensureCallArgumentFormat,
+    {
+      valid: [
+        {
+          code: "expect(x).toRaiseError(/some error/)",
+          options: OPTIONS,
+        },
+      ],
+      invalid: [
+        {
+          code: "expect(x).toRaiseError()",
+          options: OPTIONS,
+          errors: [{ messageId: "missingArgument" }],
+        },
+      ],
+    }
+  )
+}
 
-const REQUIRED_OPTIONS = [
-  {
-    toRaiseError: [
+{
+  const OPTIONS = [
+    {
+      equal: {
+        checks: [
+          {
+            argumentIndex: -1,
+            pattern: "^given .+",
+            message: "Last arg must start with 'given'",
+          },
+        ],
+      },
+    },
+  ]
+
+  ruleTester.run(
+    "call-argument-format (negative index)",
+    ensureCallArgumentFormat,
+    {
+      valid: [
+        {
+          code: 't.equal(actual, expected, "given input should match")',
+          options: OPTIONS,
+        },
+      ],
+      invalid: [
+        {
+          code: 't.equal(actual, expected, "should match output")',
+          options: OPTIONS,
+          errors: [{ messageId: "formatViolation" }],
+        },
+      ],
+    }
+  )
+}
+
+{
+  const OPTIONS = [
+    {
+      log: {
+        mode: "or",
+        checks: [
+          { pattern: "^info: ", message: "..." },
+          { pattern: "^warn: ", message: "..." },
+        ],
+      },
+    },
+  ]
+
+  ruleTester.run("call-argument-format (OR mode)", ensureCallArgumentFormat, {
+    valid: [
       {
-        required: true,
-        message: "toRaiseError must include an error pattern argument",
+        code: 'log("warn: something")',
+        options: OPTIONS,
       },
     ],
-  },
-]
-
-ruleTester.run("call-argument-format (required arg)", callArgumentFormat, {
-  valid: [
-    // Has an argument
-    {
-      code: "expect(x).toRaiseError(/some error/)",
-      options: REQUIRED_OPTIONS,
-    },
-    {
-      code: 'expect(x).toRaiseError("error message")',
-      options: REQUIRED_OPTIONS,
-    },
-    // Unconfigured method — ignored
-    {
-      code: "expect(x).toBe()",
-      options: REQUIRED_OPTIONS,
-    },
-  ],
-  invalid: [
-    // No argument
-    {
-      code: "expect(x).toRaiseError()",
-      options: REQUIRED_OPTIONS,
-      errors: [{ messageId: "missingArgument" }],
-    },
-  ],
-})
-
-// --- negative argumentIndex ---
-
-const LAST_ARG_OPTIONS = [
-  {
-    "equal|deepEqual": [
+    invalid: [
+      // Error - neither rule matches
       {
-        argumentIndex: -1,
-        pattern: "^given .+",
-        message: "Last argument must start with 'given'",
+        code: 'log("error: something")',
+        options: OPTIONS,
+        errors: [{ messageId: "formatViolation" }],
       },
     ],
-  },
-]
+  })
+}
 
-ruleTester.run("call-argument-format (negative index)", callArgumentFormat, {
-  valid: [
+{
+  const OPTIONS = [
     {
-      code: 't.equal(actual, expected, "given input should match")',
-      options: LAST_ARG_OPTIONS,
-    },
-    {
-      code: 't.deepEqual(a, b, "given empty array should equal")',
-      options: LAST_ARG_OPTIONS,
-    },
-    // Only 1 arg, index -1 resolves to arg[0]
-    {
-      code: 't.equal("given something")',
-      options: LAST_ARG_OPTIONS,
-    },
-  ],
-  invalid: [
-    {
-      code: 't.equal(actual, expected, "should match output")',
-      options: LAST_ARG_OPTIONS,
-      errors: [{ messageId: "formatViolation" }],
-    },
-    {
-      code: 't.deepEqual(a, b, "wrong format")',
-      options: LAST_ARG_OPTIONS,
-      errors: [{ messageId: "formatViolation" }],
-    },
-  ],
-})
-
-// --- method call on object (t.equal, expect().x) ---
-
-ruleTester.run("call-argument-format (member expr)", callArgumentFormat, {
-  valid: [
-    // Computed property — ignored
-    {
-      code: 'obj["test"]("whatever")',
-      options: TEST_OPTIONS,
-    },
-  ],
-  invalid: [],
-})
-
-// --- check with only message (no pattern, no required) — no-op ---
-
-ruleTester.run("call-argument-format (no-op check)", callArgumentFormat, {
-  valid: [
-    {
-      code: 'test("anything goes")',
-      options: [{ test: [{ message: "this check does nothing" }] }],
-    },
-  ],
-  invalid: [],
-})
-
-// --- multiple checks on same key ---
-
-const MULTI_CHECK_OPTIONS = [
-  {
-    test: [
-      {
-        required: true,
-        message: "test() must have a title argument",
+      log: {
+        mode: "and",
+        checks: [
+          {
+            pattern: "^\\[\\w+\\]",
+            message: "Must start with '[module]' tag",
+          },
+          {
+            pattern: "\\[\\w+\\] .{10,}",
+            message: "Message body must be at least 10 chars",
+          },
+        ],
       },
+    },
+  ]
+
+  ruleTester.run("call-argument-format (AND mode)", ensureCallArgumentFormat, {
+    valid: [
       {
-        pattern: "^given .+",
-        message: "test title must start with 'given'",
+        code: 'log("[parser] unexpected end of input")',
+        options: OPTIONS,
       },
     ],
-  },
-]
-
-ruleTester.run("call-argument-format (multi-check)", callArgumentFormat, {
-  valid: [
-    {
-      code: 'test("given valid input", () => {})',
-      options: MULTI_CHECK_OPTIONS,
-    },
-  ],
-  invalid: [
-    // No arguments — fails required check
-    {
-      code: "test()",
-      options: MULTI_CHECK_OPTIONS,
-      errors: [{ messageId: "missingArgument" }],
-    },
-    // Has argument but wrong format — fails pattern check
-    {
-      code: 'test("wrong format", () => {})',
-      options: MULTI_CHECK_OPTIONS,
-      errors: [{ messageId: "formatViolation" }],
-    },
-  ],
-})
+    invalid: [
+      // Error - Passes first check, fails second (body too short)
+      {
+        code: 'log("[parser] oops")',
+        options: OPTIONS,
+        errors: [{ message: "Message body must be at least 10 chars" }],
+      },
+      // Error - Fails first check
+      {
+        code: 'log("missing tag")',
+        options: OPTIONS,
+        errors: [{ message: "Must start with '[module]' tag" }],
+      },
+    ],
+  })
+}
 
 console.log("All call-argument-format tests passed")

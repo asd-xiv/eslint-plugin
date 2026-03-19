@@ -1,22 +1,42 @@
-import { stringifyExpression } from "@u/stringify-expression.js"
-import type { Expression } from "acorn"
+import { expandOptionKeys, runChecks } from "@u/resolve-checks.js"
+import type { RuleOption } from "@u/resolve-checks.js"
+import type { CallExpression, Expression } from "acorn"
 import type { Rule } from "eslint"
 
-type Check = {
-  argumentIndex?: number
-  pattern?: string
-  required?: boolean
-  message: string
+/**
+ * Extract the function name and arguments from a call expression node.
+ * Returns undefined for computed calls (`obj["method"]()`).
+ *
+ * @example
+ * test("given x should y", () => {})  // => { name: "test", callArguments: [...] }
+ * t.equal(a, b, "given x should y")   // => { name: "equal", callArguments: [...] }
+ * obj["test"]("whatever")             // => undefined
+ */
+const getCalleeSignature = (
+  node: Rule.Node
+): { name: string; callArguments: Expression[] } | undefined => {
+  const { callee, arguments: callArguments } = node as unknown as CallExpression
+
+  // Direct call: test("..."), describe("...")
+  if (callee.type === "Identifier") {
+    return { name: callee.name, callArguments: callArguments as Expression[] }
+  }
+
+  // Method call: expect().toRaiseError(), t.equal()
+  if (
+    callee.type === "MemberExpression" &&
+    callee.property.type === "Identifier"
+  ) {
+    return {
+      name: callee.property.name,
+      callArguments: callArguments as Expression[],
+    }
+  }
+
+  return undefined
 }
 
-type Options = Record<string, Check[]>
-
-type ResolvedEntry = {
-  names: string[]
-  checks: Check[]
-}
-
-const callArgumentFormat: Rule.RuleModule = {
+const ensureCallArgumentFormat: Rule.RuleModule = {
   meta: {
     type: "suggestion",
     docs: {
@@ -26,116 +46,88 @@ const callArgumentFormat: Rule.RuleModule = {
     messages: {
       formatViolation: "{{message}}",
       missingArgument: "{{message}}",
+      cannotEvaluate:
+        "Cannot statically evaluate argument. Use a string literal or template literal",
     },
     schema: [
       {
         type: "object",
         additionalProperties: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              argumentIndex: { type: "integer" },
-              pattern: { type: "string" },
-              required: { type: "boolean" },
-              message: { type: "string" },
+          type: "object",
+          properties: {
+            mode: { type: "string", enum: ["or", "and"] },
+            checks: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  argumentIndex: { type: "integer" },
+                  pattern: { type: "string" },
+                  message: { type: "string" },
+                },
+                required: ["message"],
+                additionalProperties: false,
+              },
             },
-            required: ["message"],
-            additionalProperties: false,
           },
+          required: ["checks"],
+          additionalProperties: false,
         },
       },
     ],
   },
   create(context) {
-    const ruleOptions = (context.options[0] ?? {}) as Options
-    const entries: ResolvedEntry[] = Object.entries(ruleOptions).map(
-      ([key, checks]) => ({
-        names: key.split("|"),
-        checks,
-      })
+    const resolvedOptions = expandOptionKeys(
+      context.options[0] as Record<string, RuleOption>
     )
-
-    if (entries.length === 0) {
+    if (resolvedOptions.length === 0) {
       return {}
     }
 
-    const findChecks = (name: string): Check[] | undefined => {
-      for (const entry of entries) {
-        if (entry.names.includes(name)) {
-          return entry.checks
-        }
-      }
-
-      return undefined
-    }
-
-    const getCalleeName = (node: Rule.Node): string | undefined => {
-      // Direct call: test("..."), describe("...")
-      if (node.type === "Identifier") {
-        return node.name
-      }
-
-      // Method call: expect().toRaiseError(), t.equal()
-      if (
-        node.type === "MemberExpression" &&
-        node.property.type === "Identifier"
-      ) {
-        return node.property.name
-      }
-
-      return undefined
-    }
-
     return {
-      CallExpression(node) {
-        const name = getCalleeName(node.callee as Rule.Node)
-        if (!name) {
+      CallExpression: node => {
+        const callee = getCalleeSignature(node)
+        if (!callee) {
           return
         }
 
-        const checks = findChecks(name)
-        if (!checks || checks.length === 0) {
+        const matchingOptions = resolvedOptions.filter(option =>
+          option.names.includes(callee.name)
+        )
+        if (matchingOptions.length === 0) {
           return
         }
 
-        for (const check of checks) {
-          const index = check.argumentIndex ?? 0
-          const resolvedIndex =
-            index < 0 ? node.arguments.length + index : index
-          const argument = node.arguments[resolvedIndex]
+        // AND across options: every matching option must pass
+        for (const option of matchingOptions) {
+          const result = runChecks(
+            option.checks,
+            callee.callArguments,
+            option.mode
+          )
 
-          // required: true — just assert the argument exists
-          if (check.required) {
-            if (!argument) {
-              context.report({
-                node,
-                messageId: "missingArgument",
-                data: { message: check.message },
-              })
-            }
-
-            continue
-          }
-
-          // No argument at this index — skip pattern checks
-          if (!argument) {
-            continue
-          }
-
-          // No pattern configured — skip
-          if (!check.pattern) {
-            continue
-          }
-
-          const value = stringifyExpression(argument as Expression)
-          const re = new RegExp(check.pattern)
-
-          if (!re.test(value)) {
+          if (result.status === "missing_argument") {
             context.report({
-              node: argument,
+              node,
+              messageId: "missingArgument",
+              data: { message: result.message },
+            })
+            continue
+          }
+
+          if (result.status === "cannot_evaluate") {
+            context.report({
+              node: result.node,
+              messageId: "cannotEvaluate",
+            })
+            continue
+          }
+
+          if (result.status === "fail") {
+            context.report({
+              node: result.node,
               messageId: "formatViolation",
-              data: { message: check.message },
+              data: { message: result.message },
             })
           }
         }
@@ -144,4 +136,4 @@ const callArgumentFormat: Rule.RuleModule = {
   },
 }
 
-export { callArgumentFormat }
+export { ensureCallArgumentFormat }
