@@ -1,6 +1,6 @@
 {
   "name": "@asd14/eslint-plugin",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "ESLint rules for overly fidgety namers",
   "license": "MIT",
   "repository": "https://github.com/asd-xiv/eslint-plugin",
@@ -8,5 +8,8 @@
     "name": "Andrei Dumitrescu",
     "url": "https://github.com/andreidmt"
   },
-  "keywords": ["eslint", "eslint-plugin"]
+  "keywords": [
+    "eslint",
+    "eslint-plugin"
+  ]
 }
