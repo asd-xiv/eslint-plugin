@@ -32,7 +32,7 @@ export default [
       "@asd14/throw-argument-format": [
         "error",
         {
-          // Shared namespace - both classes must satisfy this entry
+          // Shared namespace - both classes must satisfy this option
           "TypeError|RangeError": {
             checks: [
               {
@@ -41,7 +41,7 @@ export default [
               }
             ]
           },
-          // Body format specific to TypeError - single-type or two-type variant
+          // Body format for TypeError - single-type or two-type variant
           "TypeError": {
             mode: "or",
             checks: [
@@ -82,12 +82,12 @@ export default [
 **Correct**
 
 ```js
-// TypeError satisfies namespace entry + type-error body entry
+// TypeError satisfies namespace option + type-error body option
 throw new TypeError(
   `@asd14/m/sort: expected 'input' to be 'Array', got '${type(input)}'`
 )
 
-// RangeError satisfies namespace entry + range body entry
+// RangeError satisfies namespace option + range body option
 throw new RangeError("@asd14/m/slice: index 5 out of bounds [0, 3]")
 
 // Unconfigured class (ignored)

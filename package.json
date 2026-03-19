@@ -1,7 +1,7 @@
 {
   "name": "@asd14/eslint-plugin",
   "version": "3.0.0",
-  "description": "ESLint rules for opinionated DX not covered by existing plugins",
+  "description": "ESLint rules for overly fidgety namers",
   "license": "MIT",
   "sideEffects": false,
   "publishConfig": {
@@ -18,6 +18,10 @@
   "files": [
     "/dist",
     "SKILL.md"
+  ],
+  "keywords": [
+    "eslint",
+    "eslint-plugin"
   ],
   "nx": {
     "projectType": "library",
@@ -36,6 +40,9 @@
     "./package.json": "./package.json"
   },
   "scripts": {
+    "----UTIL": "",
+    "prepare": "git config --local core.hooksPath .githooks",
+    "format": "eslint --fix .",
     "----BUNDLE": "",
     "build:code": "swc src -d dist --ignore '**/*.test.ts' --ignore '**/*.estest.ts' --strip-leading-paths",
     "build:types": "tsc --declaration --emitDeclarationOnly --project ./.tsconfig/code.json",

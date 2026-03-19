@@ -4,15 +4,17 @@
 
 # @asd14/eslint-plugin
 
-> ESLint rules for opinionated DX not covered by existing plugins.
+> :pencil: ESLint rules for overly fidgety namers
+
+![fancy eslint rule for naming things](docs/screenshot.png)
+
+## Table of contents
 
 <!-- vim-markdown-toc GFM -->
 
 - [Install](#install)
 - [Rules](#rules)
 - [Develop](#develop)
-  - [Rules](#rules-1)
-  - [Tools](#tools)
 - [Changelog](#changelog)
 
 <!-- vim-markdown-toc -->
@@ -23,14 +25,6 @@
 npm install @asd14/eslint-plugin eslint --save-dev
 ```
 
-> [!NOTE]
->
-> ```
-> peerDependencies: {
->   "eslint": "^9 || ^10"
-> }
-> ```
-
 ## Rules
 
 | Rule                                                                        | Description                                        | :wrench: |
@@ -40,7 +34,7 @@ npm install @asd14/eslint-plugin eslint --save-dev
 
 ## Develop
 
-### Rules
+**Rules**:
 
 - Each rule in its own folder: `src/rules/<rule-name>/`
 - Export from `src/index.ts`
@@ -49,7 +43,7 @@ npm install @asd14/eslint-plugin eslint --save-dev
 - Test code `node:test` in colocated `*.test.ts` files
 - 100% coverage enforced via `c8 --100`
 
-### Tools
+**Tools**:
 
 ```bash
 npm run lint        # eslint

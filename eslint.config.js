@@ -29,6 +29,19 @@ export default [
     files: [...TEST_FILES],
     plugins: { "@asd14": asd14Plugin },
     rules: {
+      "@asd14/throw-argument-format": [
+        "error",
+        {
+          "TypeError|Error": {
+            checks: [
+              {
+                pattern: "^@asd14/eslint-plugin:/\\w+: ",
+                message: "Must use '@asd14/eslint-plugin:' namespace",
+              },
+            ],
+          },
+        },
+      ],
       "@asd14/call-argument-format": [
         "error",
         {
@@ -37,7 +50,7 @@ export default [
               {
                 pattern: "^given \\[.+\\] should \\[.+\\]$",
                 message:
-                  "Assertion message must match: given [<context>] should [<expectation>]",
+                  "Assertion message must match 'given [<context>] should [<expectation>]'",
               },
             ],
           },
