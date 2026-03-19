@@ -10,181 +10,46 @@
 
 - [Install](#install)
 - [Rules](#rules)
-  - [`@asd14/throw-argument-format`](#asd14throw-argument-format)
-  - [`@asd14/call-argument-format`](#asd14call-argument-format)
 - [Develop](#develop)
+  - [Rules](#rules-1)
+  - [Tools](#tools)
+- [Changelog](#changelog)
 
 <!-- vim-markdown-toc -->
 
 ## Install
 
 ```bash
-npm install @asd14/eslint-plugin --save-dev
+npm install @asd14/eslint-plugin eslint --save-dev
 ```
 
-> [!NOTE]  
-> Works with either `eslint ^9` or `eslint ^10`.
+> [!NOTE]
+>
+> ```
+> peerDependencies: {
+>   "eslint": "^9 || ^10"
+> }
+> ```
 
 ## Rules
 
-### `@asd14/throw-argument-format`
-
-Enforce consistent error message format in `throw` statements.
-
-- Per error class: `Error`, `TypeError` or custom `DBError`
-- Each class is an array of `RegExp` patterns
-- `OR` matching, first match wins
-
-```js
-// eslint.config.js
-import asd14Plugin from "@asd14/eslint-plugin"
-
-export default [
-  {
-    plugins: { "@asd14": asd14Plugin },
-    rules: {
-      "@asd14/throw-argument-format": [
-        "error",
-        {
-          TypeError: [
-            {
-              pattern:
-                "^@asd14/m/\\w+: expected '\\w+' to be '\\w+' or '\\w+', got '\\w+'",
-              message:
-                "Format: @asd14/m/<fn>: expected '<param>' to be '<Type>' or '<Type>', got '<Actual>'"
-            },
-            {
-              pattern:
-                "^@asd14/m/\\w+: expected '\\w+' to be '\\w+', got '\\w+'",
-              message:
-                "Format: @asd14/m/<fn>: expected '<param>' to be '<Type>', got '<Actual>'"
-            }
-          ]
-        }
-      ]
-    }
-  }
-]
-```
-
-<details>
-<summary>Examples</summary>
-
-**Correct**
-
-```js
-// Template literal with interpolation
-throw new TypeError(
-  `@asd14/m/sort: expected 'input' to be 'Array', got '${type(input)}'`
-)
-
-// String concatenation
-throw new TypeError(
-  "@asd14/m/sort: expected 'input' to be 'Array', got '" + type(input) + "'"
-)
-
-// "or" variant - multiple expected types
-throw new TypeError(
-  `@asd14/m/all: expected 'fn' to be 'Function' or 'Array', got '${type(fn)}'`
-)
-
-// Unconfigured error classes are ignored
-throw new Error("something went wrong")
-```
-
-**Incorrect**
-
-```js
-// Missing @asd14/m/ prefix
-throw new TypeError("expected 'input' to be 'Array', got '" + type(x) + "'")
-
-// Unquoted types
-throw new TypeError(`@asd14/m/sort: expected Array, got ${type(input)}`)
-
-// Can't statically evaluate
-throw new TypeError(message)
-```
-
-</details>
-
-### `@asd14/call-argument-format`
-
-Enforce consistent argument format in function or method calls.
-
-- Key: `|`-separated function/method names
-- `argumentIndex`: defaults to `0`, negative counts from end (`-1` = last arg)
-- `pattern`: regexp tested against the stringified argument
-- `required: true`: asserts the argument exists (no regexp needed)
-- Works with direct calls (`test(...)`) and method calls (`t.equal(...)`,
-  `expect().toRaiseError(...)`)
-
-```js
-// eslint.config.js
-import asd14Plugin from "@asd14/eslint-plugin"
-
-export default [
-  {
-    plugins: { "@asd14": asd14Plugin },
-    rules: {
-      "@asd14/call-argument-format": [
-        "error",
-        {
-          // Tape assertion messages must follow given/should pattern
-          "equal|deepEqual|ok|throws": [
-            {
-              argumentIndex: -1,
-              pattern: "^given \\[.+\\] should \\[.+\\]$",
-              message:
-                "Assertion message must match: given [<context>] should [<expectation>]"
-            }
-          ],
-          // tstyche toRaiseError must include an error pattern
-          "toRaiseError": [
-            {
-              required: true,
-              message: "toRaiseError() must include an error pattern argument"
-            }
-          ]
-        }
-      ]
-    }
-  }
-]
-```
-
-<details>
-<summary>Examples</summary>
-
-**Correct**
-
-```js
-// Tape - last argument matches pattern
-t.equal(result, 42, "given [valid input] should [return 42]")
-t.deepEqual(
-  output,
-  expected,
-  "given [empty array] should [return empty object]"
-)
-
-// tstyche - toRaiseError has an argument
-expect(mutate({ name: 42 }, input)).type.toRaiseError(
-  /'number' is not assignable/
-)
-```
-
-**Incorrect**
-
-```js
-// Missing given/should pattern
-t.equal(result, 42, "returns 42")
-
-// Empty toRaiseError
-expect(mutate({ name: 42 }, input)).type.toRaiseError()
-```
-
-</details>
+| Rule                                                                        | Description                                        | :wrench: |
+| :-------------------------------------------------------------------------- | :------------------------------------------------- | :------: |
+| [`@asd14/throw-argument-format`](src/rules/throw-argument-format/README.md) | Enforce error message format in `throw` statements |   :x:    |
+| [`@asd14/call-argument-format`](src/rules/call-argument-format/README.md)   | Enforce argument format in function calls          |   :x:    |
 
 ## Develop
+
+### Rules
+
+- Each rule in its own folder: `src/rules/<rule-name>/`
+- Export from `src/index.ts`
+- Test rules using `eslint.RuleTester` in colocated `<rule-name>.estest.ts`
+  files
+- Test code `node:test` in colocated `*.test.ts` files
+- 100% coverage enforced via `c8 --100`
+
+### Tools
 
 ```bash
 npm run lint        # eslint
@@ -192,3 +57,8 @@ npm run typecheck   # tsc --noEmit
 npm run test        # node:test runner
 npm run coverage    # c8 --100
 ```
+
+## Changelog
+
+See the [releases section](https://github.com/asd-xiv/eslint-plugin/releases)
+for details.
