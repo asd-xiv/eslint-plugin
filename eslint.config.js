@@ -32,13 +32,15 @@ export default [
       "@asd14/call-argument-format": [
         "error",
         {
-          test: [
-            {
-              pattern: "^given \\[.+\\] should \\[.+\\]$",
-              message:
-                "Assertion message must match: given [<context>] should [<expectation>]",
-            },
-          ],
+          test: {
+            checks: [
+              {
+                pattern: "^given \\[.+\\] should \\[.+\\]$",
+                message:
+                  "Assertion message must match: given [<context>] should [<expectation>]",
+              },
+            ],
+          },
         },
       ],
     },
