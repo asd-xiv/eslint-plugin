@@ -21,16 +21,24 @@
 
 ## Install
 
-```bash
+```sh
+# humans
 npm install @asd14/eslint-plugin eslint --save-dev
 ```
 
+```sh
+# ai
+npx skills add asd-xiv/eslint-plugin/.ai/skills
+```
+
+Thank you both and keep up the good "naming first driven development" work!
+
 ## Rules
 
-| Rule                                                                        | Description                                        | :wrench: |
-| :-------------------------------------------------------------------------- | :------------------------------------------------- | :------: |
-| [`@asd14/throw-argument-format`](src/rules/throw-argument-format/README.md) | Enforce error message format in `throw` statements |   :x:    |
-| [`@asd14/call-argument-format`](src/rules/call-argument-format/README.md)   | Enforce argument format in function calls          |   :x:    |
+| Rule                                                                        | Description                                        | :wrench: Autofix |
+| :-------------------------------------------------------------------------- | :------------------------------------------------- | :--------------: |
+| [`@asd14/throw-argument-format`](src/rules/throw-argument-format/README.md) | Enforce error message format in `throw` statements |      :x: no      |
+| [`@asd14/call-argument-format`](src/rules/call-argument-format/README.md)   | Enforce argument format in function calls          |      :x: no      |
 
 ## Develop
 
@@ -38,9 +46,9 @@ npm install @asd14/eslint-plugin eslint --save-dev
 
 - Each rule in its own folder: `src/rules/<rule-name>/`
 - Export from `src/index.ts`
-- Test rules using `eslint.RuleTester` in colocated `<rule-name>.estest.ts`
+- Test rules using `eslint.RuleTester` in collocated `<rule-name>.estest.ts`
   files
-- Test code `node:test` in colocated `*.test.ts` files
+- Test code `node:test` in collocated `*.test.ts` files
 - 100% coverage enforced via `c8 --100`
 
 **Tools**:

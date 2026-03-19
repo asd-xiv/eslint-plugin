@@ -1,6 +1,6 @@
 # `@asd14/throw-argument-format`
 
-Enforce error message format in `throw` statements.
+ESLint rule to enforce error message format in `throw` statements.
 
 **Entry options** (per `|`-separated key):
 

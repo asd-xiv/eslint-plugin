@@ -1,6 +1,6 @@
 # `@asd14/call-argument-format`
 
-Enforce argument format in function calls.
+ESLint rule to enforce argument format in function calls.
 
 **Entry options** (per `|`-separated key):
 
