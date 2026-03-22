@@ -8,8 +8,5 @@
     "name": "Andrei Dumitrescu",
     "url": "https://github.com/andreidmt"
   },
-  "keywords": [
-    "eslint",
-    "eslint-plugin"
-  ]
+  "keywords": ["eslint", "eslint-plugin"]
 }

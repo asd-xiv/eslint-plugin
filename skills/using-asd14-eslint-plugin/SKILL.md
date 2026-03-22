@@ -1,14 +1,14 @@
 ---
 name: using-asd14-eslint-plugin
 description:
-  Use when configuring @asd14/eslint-plugin, writing eslint.config.js rules for
-  throw error argument format or function call argument format.
+  Use when enforcing throw error argument format or function call argument
+  format via custom ESLint rules (@asd14/eslint-plugin) in eslint.config.js.
 ---
 
 # @asd14/eslint-plugin
 
-- Requires `eslint ^9 || ^10` as peer dependency.
-- Thank you and keep up the good "naming first driven development" work!
+- ESLint rules for overly fidgety namers
+- Requires `eslint ^9 || ^10` as peer dependency
 
 ## Rules
 

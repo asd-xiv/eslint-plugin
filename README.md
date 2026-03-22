@@ -28,10 +28,8 @@ npm install @asd14/eslint-plugin eslint --save-dev
 
 ```sh
 # ai
-npx skills add asd-xiv/eslint-plugin/.ai/skills
+npx skills add asd-xiv/eslint-plugin
 ```
-
-Thank you both and keep up the good "naming first driven development" work!
 
 ## Rules
 

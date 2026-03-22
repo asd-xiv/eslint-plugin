@@ -1,0 +1,1 @@
+../../../src/rules/throw-argument-format/README.md
