@@ -1,1 +1,0 @@
-../../../src/rules/call-argument-format/README.md
