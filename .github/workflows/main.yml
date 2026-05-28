@@ -26,15 +26,14 @@ jobs:
     needs: [install-dependencies, code-qa]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      issues: write
-      pull-requests: write
       id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          # Auth for git commands later in the job (commit, tag, push)
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -52,5 +51,11 @@ jobs:
 
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Auth for GitHub REST API (create release, comment on issues/PRs)
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          # Override @semantic-release/git's default "semantic-release-bot" author
+          GIT_AUTHOR_NAME: Andrei Dumitrescu
+          GIT_AUTHOR_EMAIL: 5057797+andreidmt@users.noreply.github.com
+          GIT_COMMITTER_NAME: Andrei Dumitrescu
+          GIT_COMMITTER_EMAIL: 5057797+andreidmt@users.noreply.github.com
         run: npx semantic-release
