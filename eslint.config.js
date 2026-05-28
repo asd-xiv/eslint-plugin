@@ -1,5 +1,4 @@
 import { tsConfig, devConfig, commonIgnores } from "@asd14/eslint-config/ts"
-import asd14Plugin from "@asd14/eslint-plugin"
 
 const SRC_FILES = ["src/**/*.ts"]
 const TEST_FILES = ["src/**/*.test.ts"]
@@ -23,39 +22,6 @@ export default [
 
       // `node:test` describe/test return promises that are handled by the test runner
       "@typescript-eslint/no-floating-promises": "off",
-    },
-  },
-  {
-    files: [...TEST_FILES],
-    plugins: { "@asd14": asd14Plugin },
-    rules: {
-      "@asd14/throw-argument-format": [
-        "error",
-        {
-          "TypeError|Error": {
-            checks: [
-              {
-                pattern: "^@asd14/eslint-plugin:/\\w+: ",
-                message: "Must use '@asd14/eslint-plugin:' namespace",
-              },
-            ],
-          },
-        },
-      ],
-      "@asd14/call-argument-format": [
-        "error",
-        {
-          test: {
-            checks: [
-              {
-                pattern: "^given \\[.+\\] should \\[.+\\]$",
-                message:
-                  "Assertion message must match 'given [<context>] should [<expectation>]'",
-              },
-            ],
-          },
-        },
-      ],
     },
   },
 ]
