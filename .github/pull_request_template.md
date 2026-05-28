@@ -16,7 +16,7 @@ Before submitting your PR:
 
 ## Checklist
 
-- [ ] Consult `DECISIONS.md`
+- [ ] Consult `docs/DECISIONS.md`
 - [ ] Rule in its own folder under `src/rules/`
 - [ ] Tests with 100% coverage
 - [ ] Export in `src/index.ts`

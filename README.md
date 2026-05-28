@@ -6,7 +6,7 @@
 
 > :pencil: ESLint rules for overly fidgety namers
 
-![fancy eslint rule for naming things](docs/screenshot.png)
+![fancy eslint rule for naming things](docs/media/screenshot.png)
 
 ## Table of contents
 
