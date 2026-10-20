@@ -56,9 +56,7 @@
     "typecheck": "npm run typecheck:code && npm run typecheck:config && npm run typecheck:tests",
     "----TEST": "",
     "test": "TSX_TSCONFIG_PATH=.tsconfig/tests.json node --import tsx --test 'src/**/*.test.ts' 'src/**/*.estest.ts'",
-    "coverage": "c8 --100 --exclude='src/**/*.test.ts' --exclude='src/**/*.estest.ts' npm run test",
-    "----PUBLISH": "",
-    "release": "semantic-release"
+    "coverage": "c8 --100 --exclude='src/**/*.test.ts' --exclude='src/**/*.estest.ts' npm run test"
   },
   "dependencies": {
     "acorn": "^8.19.0"
@@ -66,15 +64,14 @@
   "devDependencies": {
     "@asd14/eslint-config": "^16.1.0",
     "@asd14/prettier-config": "^1.5.0",
+    "@asd14/semantic-release-config": "^1.0.1",
     "@asd14/ts-config": "^1.6.0",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
-    "@semantic-release/git": "^11.0.1",
     "@swc/cli": "^0.8.1",
     "@swc/core": "^1.16.18",
     "@types/node": "^26.6.5",
     "c8": "^12.0.0",
-    "conventional-changelog-conventionalcommits": "^10.4.1",
     "eslint": "^9.39.5",
     "prettier": "^3.9.10",
     "semantic-release": "^25.0.9",
