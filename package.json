@@ -41,7 +41,7 @@
   },
   "scripts": {
     "----UTIL": "",
-    "prepare": "git config --local core.hooksPath .githooks",
+    "prepare": "git config --local core.hooksPath .githook",
     "format": "eslint --fix .",
     "----BUNDLE": "",
     "build:code": "swc src -d dist --ignore '**/*.test.ts' --ignore '**/*.estest.ts' --strip-leading-paths",
