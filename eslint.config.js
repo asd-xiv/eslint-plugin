@@ -1,4 +1,5 @@
-import { tsConfig, devConfig, commonIgnores } from "@asd14/eslint-config/ts"
+import path from "node:path"
+import { tsConfig, devConfig, getIgnorePatterns } from "@asd14/eslint-config/ts"
 
 const SRC_FILES = ["src/**/*.ts"]
 const TEST_FILES = ["src/**/*.test.ts"]
@@ -7,7 +8,9 @@ const DEV_FILES = ["eslint.config.js"]
 
 /** @type {import("eslint").Linter.Config[]} */
 export default [
-  { ignores: commonIgnores },
+  {
+    ignores: getIgnorePatterns(path.join(import.meta.dirname, ".gitignore")),
+  },
   {
     files: SRC_FILES,
     ...tsConfig,
