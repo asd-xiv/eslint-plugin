@@ -4,26 +4,22 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   detect-secrets:
     name: Detect Secrets
     uses: ./.github/workflows/_detect-secrets.yml
 
-  install-dependencies:
-    name: Install Dependencies
-    uses: ./.github/workflows/_install-dependencies.yml
-
   code-qa:
     name: Code QA
-    needs: [detect-secrets, install-dependencies]
+    needs: [detect-secrets]
     uses: ./.github/workflows/_code-qa.yml
-    with:
-      cache-key: ${{ needs.install-dependencies.outputs.cache-key }}
-      node-version: ${{ needs.install-dependencies.outputs.node-version }}
 
   release:
     name: Release
-    needs: [install-dependencies, code-qa]
+    needs: [code-qa]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -38,15 +34,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ needs.install-dependencies.outputs.node-version }}
+          node-version: 24
+          cache: npm
 
-      - name: Restore node_modules
-        uses: actions/cache@v5
-        with:
-          path: node_modules
-          key: node-modules-${{ needs.install-dependencies.outputs.cache-key }}
+      - name: Install dependencies
+        run: npm clean-install
 
-      - name: Build project
+      - name: Build
         run: npm run build
 
       - name: Release
